@@ -7,6 +7,7 @@ void main() {
   runApp(const ProPediaApp());
 }
 
+//beginning
 class ProPediaApp extends StatelessWidget {
   const ProPediaApp({super.key});
 
