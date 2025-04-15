@@ -1,10 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'login_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final String userName;
 
   const HomeScreen({super.key, required this.userName});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeNotifications();
+  }
+
+  void _initializeNotifications() async {
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
+
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  void _showNotification() async {
+    final String formattedTime = DateFormat('HH:mm:ss').format(DateTime.now());
+
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'channel_id',
+      'channel_name',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'Notifikasi',
+      'Waktu sekarang: $formattedTime',
+      notificationDetails,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +72,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                'Hello, $userName',
+                'Hello, ${widget.userName}',
                 style: const TextStyle(fontSize: 16, color: Colors.black),
               ),
             ),
@@ -28,7 +81,7 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_none, color: Colors.black),
-            onPressed: () {},
+            onPressed: _showNotification,
           ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.black),
@@ -91,27 +144,9 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 12),
 
             // Recommended List
-            _buildRecommendationItem(
-              'Foto 1',
-              'Grand Palace',
-              'Jakarta',
-              'Rp 1.2 M',
-              'Apartemen',
-            ),
-            _buildRecommendationItem(
-              'Foto 2',
-              'Green Park',
-              'Bandung',
-              'Rp 900 Juta',
-              'Rumah',
-            ),
-            _buildRecommendationItem(
-              'Foto 3',
-              'Bukit Indah',
-              'Bogor',
-              'Rp 500 Juta',
-              'Tanah',
-            ),
+            _buildRecommendationItem('Foto 1', 'Grand Palace', 'Jakarta', 'Rp 1.2 M', 'Apartemen'),
+            _buildRecommendationItem('Foto 2', 'Green Park', 'Bandung', 'Rp 900 Juta', 'Rumah'),
+            _buildRecommendationItem('Foto 3', 'Bukit Indah', 'Bogor', 'Rp 500 Juta', 'Tanah'),
           ],
         ),
       ),
