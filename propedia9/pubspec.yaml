@@ -63,6 +63,17 @@ flutter:
   uses-material-design: true
   assets:
   - assets/logo_propedia.jpg
+
+  - assets/apartemen_elite.jpg
+  - assets/apartemen_elite2.jpg
+  - assets/apartemen_elite3.jpg
+
+  - assets/rumah_minimalis.jpg
+  - assets/rumah_minimalis2.jpg
+  - assets/rumah_minimalis3.jpg
+
+  - assets/ruko1.jpg
+  - assets/ruko2.jpg
   
     
   # To add assets to your application, add an assets section, like this:

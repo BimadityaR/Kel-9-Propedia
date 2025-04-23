@@ -8,6 +8,8 @@ void main() {
 }
 
 //beginning
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 class ProPediaApp extends StatelessWidget {
   const ProPediaApp({super.key});
 
@@ -15,6 +17,7 @@ class ProPediaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ProPedia',
+      navigatorObservers: [routeObserver],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue, // Changed from lightBlue to blue

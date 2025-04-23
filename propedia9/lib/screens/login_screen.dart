@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
+import 'admin_home.dart';
+import 'pembeli_home.dart';
+import 'penjual_home.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,25 +16,86 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool _isLoading = false;
 
   Future<void> login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     final prefs = await SharedPreferences.getInstance();
     final savedEmail = prefs.getString('email');
     final savedPassword = prefs.getString('password');
+    final savedRole = prefs.getString('role');
+
+    await Future.delayed(const Duration(seconds: 1)); // Simulasi loading
 
     if (emailController.text == savedEmail &&
         passwordController.text == savedPassword) {
+      Widget nextScreen;
+
+      switch (savedRole) {
+        case 'Admin':
+          // dialog konfirmasi untuk admin
+          showAdminConfirmationDialog(context);
+          return;
+        case 'Pembeli':
+          nextScreen = const BuyerHome();
+          break;
+        case 'Penjual':
+          nextScreen = HomeScreen(userName: savedEmail!);
+          break;
+        default:
+          nextScreen = HomeScreen(userName: savedEmail!);
+      }
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => HomeScreen(userName: savedEmail!),
-        ),
+        MaterialPageRoute(builder: (_) => nextScreen),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login failed. Invalid credentials.')),
+        const SnackBar(
+          content: Text('Login gagal. Email atau password salah.'),
+        ),
       );
     }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void showAdminConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Konfirmasi Admin'),
+            content: const Text('Anda akan masuk sebagai Admin. Lanjutkan?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  setState(() {
+                    _isLoading = false;
+                  });
+                },
+                child: const Text('Batal'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AdminHome()),
+                  );
+                },
+                child: const Text('Lanjutkan'),
+              ),
+            ],
+          ),
+    );
   }
 
   @override
@@ -44,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             const SizedBox(height: 40),
             const Text(
-              'Welcome',
+              'Welcome to ProPedia',
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const Text('Log in to continue', style: TextStyle(fontSize: 18)),
@@ -88,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: login,
+              onPressed: _isLoading ? null : login,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.lightBlue,
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -96,10 +160,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(25),
                 ),
               ),
-              child: const Text(
-                'LOGIN',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+              child:
+                  _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                        'LOGIN',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
             ),
             const SizedBox(height: 30),
             Center(
@@ -130,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade300,
+        color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(25),
       ),
       child: TextField(

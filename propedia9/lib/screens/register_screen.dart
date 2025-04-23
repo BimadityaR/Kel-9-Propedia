@@ -12,43 +12,46 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  String selectedRole = 'Pembeli';
 
   Future<void> register() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', emailController.text);
     await prefs.setString('password', passwordController.text);
-
+    await prefs.setString('role', selectedRole);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Account registered. Please login.')),
+      const SnackBar(content: Text('Account registered successfully.')),
     );
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-    );
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Register")),
+      appBar: AppBar(title: const Text('Register')),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const SizedBox(height: 40),
             TextField(
               controller: emailController,
               decoration: const InputDecoration(labelText: 'Email'),
             ),
-            const SizedBox(height: 20),
             TextField(
               controller: passwordController,
               obscureText: true,
               decoration: const InputDecoration(labelText: 'Password'),
             ),
-            const SizedBox(height: 40),
-            ElevatedButton(onPressed: register, child: const Text("Register")),
+            DropdownButton<String>(
+              value: selectedRole,
+              items: const [
+                DropdownMenuItem(value: 'Admin', child: Text('Admin')),
+                DropdownMenuItem(value: 'Penjual', child: Text('Penjual')),
+                DropdownMenuItem(value: 'Pembeli', child: Text('Pembeli')),
+              ],
+              onChanged: (value) => setState(() => selectedRole = value!),
+            ),
+            ElevatedButton(onPressed: register, child: const Text('Register')),
           ],
         ),
       ),

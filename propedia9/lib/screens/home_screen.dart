@@ -40,12 +40,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showNotification() async {
     final String formattedTime = DateFormat('HH:mm:ss').format(DateTime.now());
 
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'channel_id',
-      'channel_name',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'channel_id',
+          'channel_name',
+          importance: Importance.high,
+          priority: Priority.high,
+        );
 
     const NotificationDetails notificationDetails = NotificationDetails(
       android: androidDetails,
@@ -143,10 +144,27 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 12),
 
-            // Recommended List
-            _buildRecommendationItem('Foto 1', 'Grand Palace', 'Jakarta', 'Rp 1.2 M', 'Apartemen'),
-            _buildRecommendationItem('Foto 2', 'Green Park', 'Bandung', 'Rp 900 Juta', 'Rumah'),
-            _buildRecommendationItem('Foto 3', 'Bukit Indah', 'Bogor', 'Rp 500 Juta', 'Tanah'),
+            _buildRecommendationItem(
+              'Foto 1',
+              'Grand Palace',
+              'Jakarta',
+              'Rp 1.2 M',
+              'Apartemen',
+            ),
+            _buildRecommendationItem(
+              'Foto 2',
+              'Green Park',
+              'Bandung',
+              'Rp 900 Juta',
+              'Rumah',
+            ),
+            _buildRecommendationItem(
+              'Foto 3',
+              'Bukit Indah',
+              'Bogor',
+              'Rp 500 Juta',
+              'Tanah',
+            ),
           ],
         ),
       ),
