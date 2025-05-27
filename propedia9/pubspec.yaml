@@ -68,15 +68,13 @@ flutter:
   - assets/apartemen_elite2.jpg
   - assets/apartemen_elite3.jpg
 
-  - assets/rumah_minimalis.jpg
-  - assets/rumah_minimalis2.jpg
-  - assets/rumah_minimalis3.jpg
-
   - assets/tanah1.jpg
   - assets/tanah2.jpg
 
   - assets/ruko1.jpg
   - assets/ruko2.jpg
+
+  - assets/rumah1.jpg
   
     
   # To add assets to your application, add an assets section, like this:

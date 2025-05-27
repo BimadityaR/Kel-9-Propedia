@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
           showAdminConfirmationDialog(context);
           return;
         case 'Pembeli':
-          nextScreen = const BuyerHome();
+          nextScreen = const BuyerHomeNew();
           break;
         case 'Penjual':
           nextScreen = HomeScreen(userName: savedEmail!);

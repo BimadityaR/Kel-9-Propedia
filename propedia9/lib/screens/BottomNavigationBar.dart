@@ -1,8 +1,51 @@
-import 'login_screen.dart';
 import 'package:flutter/material.dart';
 
-class BuyerHomeNew extends StatelessWidget {
+class BuyerHomeNew extends StatefulWidget {
   const BuyerHomeNew({super.key});
+
+  @override
+  State<BuyerHomeNew> createState() => _BuyerHomeNewState();
+}
+
+class _BuyerHomeNewState extends State<BuyerHomeNew> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = [
+    HomeScreen(),
+    FavoritesScreen(),
+    ChatScreen(),
+    ProfileScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.teal,
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favorit'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'Chat'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profil'),
+        ],
+      ),
+    );
+  }
+}
+
+// ================= HOME =================
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +54,7 @@ class BuyerHomeNew extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.teal,
         elevation: 0,
-        toolbarHeight: 50,
+        toolbarHeight: 80,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -106,12 +149,15 @@ class BuyerHomeNew extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                        Container(
+                          height: 120,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                          ),
                           child: Image.asset(
-                            'assets/rumah1.jpg',
-                            height: 120,
-                            width: double.infinity,
+                            'assets/images/rumah.png', // ganti sesuai file kamu
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -160,20 +206,11 @@ class BuyerHomeNew extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favorit'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'Chat'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profil'),
-        ],
-      ),
     );
   }
 }
 
+// ================= KOMPONEN KATEGORI =================
 class _CategoryItem extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -193,5 +230,34 @@ class _CategoryItem extends StatelessWidget {
         Text(label, style: const TextStyle(fontSize: 12)),
       ],
     );
+  }
+}
+
+// ================== HALAMAN LAINNYA ==================
+
+class FavoritesScreen extends StatelessWidget {
+  const FavoritesScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Favorit'));
+  }
+}
+
+class ChatScreen extends StatelessWidget {
+  const ChatScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Chat'));
+  }
+}
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Profil'));
   }
 }
