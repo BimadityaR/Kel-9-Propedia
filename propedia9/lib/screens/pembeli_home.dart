@@ -1,5 +1,6 @@
 import 'login_screen.dart';
 import 'package:flutter/material.dart';
+import 'profile_screen.dart';
 
 class BuyerHomeNew extends StatelessWidget {
   const BuyerHomeNew({super.key});
@@ -190,11 +191,19 @@ class BuyerHomeNew extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0, // index navigasi, profil = 2
         selectedItemColor: Colors.lightBlue,
         unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfileScreen()),
+            );
+          }
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favorit'),
           BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'Chat'),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profil'),
         ],
