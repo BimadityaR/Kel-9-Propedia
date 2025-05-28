@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'login_screen.dart';
 
 class SellerHome extends StatelessWidget {
   const SellerHome({super.key});
@@ -10,8 +11,32 @@ class SellerHome extends StatelessWidget {
         title: const Text('Agen Properti'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {}, // Navigasi ke tambah properti
+            icon: const Icon(Icons.logout, color: Colors.black),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Konfirmasi Logout'),
+                  content: const Text('Apakah Anda yakin ingin logout?'),
+                  actions: [
+                    TextButton(
+                      child: const Text('Tidak'),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    TextButton(
+                      child: const Text('Ya'),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Tutup dialog
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),

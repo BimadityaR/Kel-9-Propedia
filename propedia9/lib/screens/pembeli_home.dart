@@ -9,7 +9,7 @@ class BuyerHomeNew extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.lightBlue,
         elevation: 0,
         toolbarHeight: 50,
         title: Row(
@@ -25,9 +25,38 @@ class BuyerHomeNew extends StatelessWidget {
                 ),
               ],
             ),
-            Icon(Icons.notifications_none, size: 28, color: Colors.white),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Konfirmasi Logout'),
+                  content: const Text('Apakah Anda yakin ingin logout?'),
+                  actions: [
+                    TextButton(
+                      child: const Text('Tidak'),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    TextButton(
+                      child: const Text('Ya'),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Tutup dialog
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -161,7 +190,7 @@ class BuyerHomeNew extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.teal,
+        selectedItemColor: Colors.lightBlue,
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -186,8 +215,8 @@ class _CategoryItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CircleAvatar(
-          backgroundColor: Colors.teal[100],
-          child: Icon(icon, color: Colors.teal),
+          backgroundColor: Colors.lightBlue[100],
+          child: Icon(icon, color: Colors.lightBlue),
         ),
         const SizedBox(height: 4),
         Text(label, style: const TextStyle(fontSize: 12)),

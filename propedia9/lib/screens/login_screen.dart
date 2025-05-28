@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
           nextScreen = const BuyerHomeNew();
           break;
         case 'Penjual':
-          nextScreen = HomeScreen(userName: savedEmail!);
+          nextScreen = const SellerHome();
           break;
         default:
           nextScreen = HomeScreen(userName: savedEmail!);
