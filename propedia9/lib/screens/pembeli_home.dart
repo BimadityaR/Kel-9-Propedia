@@ -1,5 +1,6 @@
-import 'login_screen.dart';
 import 'package:flutter/material.dart';
+import 'login_screen.dart';
+import 'map_screen.dart'; // Import map screen
 import 'profile_screen.dart';
 
 class BuyerHomeNew extends StatelessWidget {
@@ -29,6 +30,16 @@ class BuyerHomeNew extends StatelessWidget {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.map, color: Colors.white),
+            tooltip: 'Lihat Peta',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MapScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () {
@@ -191,7 +202,7 @@ class BuyerHomeNew extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // index navigasi, profil = 2
+        currentIndex: 0,
         selectedItemColor: Colors.lightBlue,
         unselectedItemColor: Colors.grey,
         onTap: (index) {
