@@ -1,6 +1,7 @@
 import 'login_screen.dart';
 import 'package:flutter/material.dart';
 import 'profile_screen.dart';
+import 'map_screen.dart'; // Tambahan: import MapScreen
 
 class BuyerHomeNew extends StatelessWidget {
   const BuyerHomeNew({super.key});
@@ -29,31 +30,45 @@ class BuyerHomeNew extends StatelessWidget {
           ],
         ),
         actions: [
+          // Tambahan: Tombol Map
+          IconButton(
+            icon: const Icon(Icons.map, color: Colors.white),
+            tooltip: 'Lihat Peta',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MapScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Konfirmasi Logout'),
-                  content: const Text('Apakah Anda yakin ingin logout?'),
-                  actions: [
-                    TextButton(
-                      child: const Text('Tidak'),
-                      onPressed: () => Navigator.of(context).pop(),
+                builder:
+                    (context) => AlertDialog(
+                      title: const Text('Konfirmasi Logout'),
+                      content: const Text('Apakah Anda yakin ingin logout?'),
+                      actions: [
+                        TextButton(
+                          child: const Text('Tidak'),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        TextButton(
+                          child: const Text('Ya'),
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Tutup dialog
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const LoginScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    TextButton(
-                      child: const Text('Ya'),
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Tutup dialog
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (_) => const LoginScreen()),
-                        );
-                      },
-                    ),
-                  ],
-                ),
               );
             },
           ),
@@ -75,7 +90,7 @@ class BuyerHomeNew extends StatelessWidget {
                 child: const TextField(
                   decoration: InputDecoration(
                     icon: Icon(Icons.search),
-                    hintText: 'Cari properti...'
+                    hintText: 'Cari properti...',
                   ),
                 ),
               ),
@@ -107,7 +122,7 @@ class BuyerHomeNew extends StatelessWidget {
                     'Temukan Rumah Idaman',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text('Lihat Semua', style: TextStyle(color: Colors.blue))
+                  Text('Lihat Semua', style: TextStyle(color: Colors.blue)),
                 ],
               ),
             ),
@@ -130,14 +145,16 @@ class BuyerHomeNew extends StatelessWidget {
                           color: Colors.grey.withOpacity(0.2),
                           blurRadius: 6,
                           offset: const Offset(0, 4),
-                        )
+                        ),
                       ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ClipRRect(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(12),
+                          ),
                           child: Image.asset(
                             'assets/rumah1.jpg',
                             height: 120,
@@ -150,14 +167,20 @@ class BuyerHomeNew extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
-                              Text('Rumah Minimalis', style: TextStyle(fontWeight: FontWeight.bold)),
+                              Text(
+                                'Rumah Minimalis',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                               SizedBox(height: 4),
                               Text('Jakarta Selatan'),
                               SizedBox(height: 4),
-                              Text('Rp 1.2M', style: TextStyle(color: Colors.blue)),
+                              Text(
+                                'Rp 1.2M',
+                                style: TextStyle(color: Colors.blue),
+                              ),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   );
@@ -204,8 +227,14 @@ class BuyerHomeNew extends StatelessWidget {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'Chat'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profil'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble_outline),
+            label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profil',
+          ),
         ],
       ),
     );

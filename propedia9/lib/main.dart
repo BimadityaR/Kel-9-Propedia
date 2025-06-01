@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
+import 'services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Memuat token dari secure storage sebelum aplikasi dijalankan
+  await ApiService.initialize();
+
   runApp(const ProPediaApp());
 }
 
-//beginning
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class ProPediaApp extends StatelessWidget {
@@ -20,7 +26,7 @@ class ProPediaApp extends StatelessWidget {
       navigatorObservers: [routeObserver],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue, // Changed from lightBlue to blue
+        primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const SplashDecider(),
@@ -38,24 +44,42 @@ class SplashDecider extends StatefulWidget {
 class _SplashDeciderState extends State<SplashDecider> {
   bool isLoading = true;
   bool isLoggedIn = false;
-  String? userEmail; // Added to store user email
+  String? userEmail;
 
   @override
   void initState() {
     super.initState();
-    checkLogin();
+    checkLoginStatus();
   }
 
-  Future<void> checkLogin() async {
+  Future<void> checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('email');
-    final password = prefs.getString('password');
+    final token = await ApiService.getToken();
 
-    setState(() {
-      isLoggedIn = email != null && password != null;
-      userEmail = email; // Store the email to pass to HomeScreen
-      isLoading = false;
-    });
+    if (token != null) {
+      try {
+        // Ambil email dari SharedPreferences (jika disimpan saat login)
+        final email = prefs.getString('email');
+        setState(() {
+          isLoggedIn = true;
+          userEmail = email;
+          isLoading = false;
+        });
+      } catch (e) {
+        // Handle exception
+        setState(() {
+          isLoggedIn = false;
+          userEmail = null;
+          isLoading = false;
+        });
+      }
+    } else {
+      setState(() {
+        isLoggedIn = false;
+        userEmail = null;
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -65,7 +89,7 @@ class _SplashDeciderState extends State<SplashDecider> {
     }
 
     return isLoggedIn
-        ? HomeScreen(userName: userEmail ?? 'User') // Handle null case
+        ? HomeScreen(userName: userEmail ?? 'User')
         : const LoginScreen();
   }
 }

@@ -59,9 +59,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await prefs.setString('profileImagePath', profileImage!.path);
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Data berhasil disimpan')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Data berhasil disimpan')));
   }
 
   @override
@@ -78,29 +78,45 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 radius: 50,
                 backgroundImage:
                     profileImage != null ? FileImage(profileImage!) : null,
-                child: profileImage == null
-                    ? const Icon(Icons.person, size: 50)
-                    : null,
+                child:
+                    profileImage == null
+                        ? const Icon(Icons.person, size: 50)
+                        : null,
               ),
             ),
             const SizedBox(height: 16),
-            TextField(controller: nameController, decoration: const InputDecoration(labelText: 'Your Name')),
-            TextField(controller: emailController, decoration: const InputDecoration(labelText: 'Email')),
-            TextField(controller: phoneController, decoration: const InputDecoration(labelText: 'Phone Number')),
-            TextFormField(controller: birthController, decoration: const InputDecoration(labelText: 'Date of Birth',
-              suffixIcon: Icon(Icons.calendar_today),
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Your Name'),
+            ),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
+            ),
+            TextField(
+              controller: phoneController,
+              decoration: const InputDecoration(labelText: 'Phone Number'),
+            ),
+            TextFormField(
+              controller: birthController,
+              decoration: const InputDecoration(
+                labelText: 'Date of Birth',
+                suffixIcon: Icon(Icons.calendar_today),
               ),
               readOnly: true,
               onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
                   context: context,
-                  initialDate: DateTime.now().subtract(const Duration(days: 365 * 20)),
+                  initialDate: DateTime.now().subtract(
+                    const Duration(days: 365 * 20),
+                  ),
                   firstDate: DateTime(1900),
                   lastDate: DateTime.now(),
                 );
                 if (pickedDate != null) {
                   setState(() {
-                    birthController.text = "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                    birthController.text =
+                        "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
                   });
                 }
               },
@@ -121,7 +137,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ElevatedButton(
               onPressed: saveProfile,
               child: const Text('Save Data'),
-            )
+            ),
           ],
         ),
       ),
