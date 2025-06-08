@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'secure_storage.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.102.192:8000/api/v1';
+  static const String baseUrl = 'http://192.168.231.192:8000/api/v1';
   static const bool isDebug = true;
 
   static String? _token;
