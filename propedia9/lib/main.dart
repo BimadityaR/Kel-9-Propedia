@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
-import 'services/api_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'screens/map_screen.dart';
+import 'services/secure_storage.dart';
+import 'package:http/http.dart' as http;
+import 'screens/add_property_screen.dart';
+import 'package:propedia9/models/property.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Memuat token dari secure storage sebelum aplikasi dijalankan
-  await ApiService.initialize();
-
   runApp(const ProPediaApp());
 }
 
+// RouteObserver untuk navigasi jika diperlukan
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class ProPediaApp extends StatelessWidget {
@@ -50,37 +48,18 @@ class _SplashDeciderState extends State<SplashDecider> {
   @override
   void initState() {
     super.initState();
-    checkLoginStatus();
+    checkLogin();
   }
 
-  Future<void> checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = await ApiService.getToken();
+  Future<void> checkLogin() async {
+    final token = await SecureStorage.getToken();
+    final email = await SecureStorage.getEmail();
 
-    if (token != null) {
-      try {
-        // Ambil email dari SharedPreferences (jika disimpan saat login)
-        final email = prefs.getString('email');
-        setState(() {
-          isLoggedIn = true;
-          userEmail = email;
-          isLoading = false;
-        });
-      } catch (e) {
-        // Handle exception
-        setState(() {
-          isLoggedIn = false;
-          userEmail = null;
-          isLoading = false;
-        });
-      }
-    } else {
-      setState(() {
-        isLoggedIn = false;
-        userEmail = null;
-        isLoading = false;
-      });
-    }
+    setState(() {
+      isLoggedIn = token != null;
+      userEmail = email;
+      isLoading = false;
+    });
   }
 
   @override

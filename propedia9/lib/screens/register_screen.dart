@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import 'package:http/http.dart' as http;
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -10,133 +10,63 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  String selectedRole = 'pembeli';
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  String _selectedRole = 'pembeli';
   bool _isLoading = false;
 
-  Future<void> register() async {
-    final email = emailController.text.trim();
-    final password = passwordController.text.trim();
-
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Email dan password harus diisi')),
-      );
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
+  Future<void> _register() async {
+    setState(() => _isLoading = true);
 
     try {
-      final response = await ApiService.register(
-        email: email,
-        password: password,
-        role: selectedRole,
+      await ApiService.register(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        role: _selectedRole,
       );
 
-      final body = json.decode(response.body);
-
-      if (response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(body['message'] ?? 'Akun berhasil didaftarkan'),
-          ),
-        );
-        Navigator.pop(context);
-      } else {
-        final errorMessage =
-            body['message'] ??
-            body['errors']?.values.first[0] ??
-            'Pendaftaran gagal, silakan coba lagi.';
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(errorMessage)));
-      }
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e')));
+      ).showSnackBar(SnackBar(content: Text('Registrasi gagal: $e')));
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
+      appBar: AppBar(title: const Text('Daftar Akun')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
           children: [
             TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                prefixIcon: Icon(Icons.email),
-              ),
-              keyboardType: TextInputType.emailAddress,
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
-            const SizedBox(height: 16),
             TextField(
-              controller: passwordController,
+              controller: _passwordController,
               obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                prefixIcon: Icon(Icons.lock),
-              ),
+              decoration: const InputDecoration(labelText: 'Password'),
             ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: selectedRole,
-              decoration: const InputDecoration(
-                labelText: 'Pilih Role',
-                prefixIcon: Icon(Icons.person),
-              ),
+            DropdownButtonFormField(
+              value: _selectedRole,
               items: const [
-                DropdownMenuItem(value: 'admin', child: Text('Admin')),
-                DropdownMenuItem(value: 'penjual', child: Text('Penjual')),
                 DropdownMenuItem(value: 'pembeli', child: Text('Pembeli')),
+                DropdownMenuItem(value: 'penjual', child: Text('Penjual')),
+                DropdownMenuItem(value: 'admin', child: Text('Admin')),
               ],
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    selectedRole = value;
-                  });
-                }
-              },
+              onChanged: (value) => setState(() => _selectedRole = value!),
             ),
-            const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: _isLoading ? null : register,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
+              onPressed: _isLoading ? null : _register,
               child:
                   _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                        'Register',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      ? const CircularProgressIndicator()
+                      : const Text('Daftar'),
             ),
           ],
         ),

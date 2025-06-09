@@ -1,10 +1,69 @@
 import 'login_screen.dart';
 import 'package:flutter/material.dart';
 import 'profile_screen.dart';
-import 'map_screen.dart'; // Tambahan: import MapScreen
+import 'map_screen.dart';
+import '../services/api_service.dart';
+import '../models/property.dart';
 
-class BuyerHomeNew extends StatelessWidget {
+class BuyerHomeNew extends StatefulWidget {
   const BuyerHomeNew({super.key});
+
+  @override
+  State<BuyerHomeNew> createState() => _BuyerHomeNewState();
+}
+
+class _BuyerHomeNewState extends State<BuyerHomeNew> {
+  List<Property> properties = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProperties();
+  }
+
+  Future<void> fetchProperties() async {
+    setState(() => isLoading = true);
+    try {
+      final data = await ApiService.getProperties();
+      setState(() {
+        properties = data;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Gagal mengambil properti: $e')));
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  void _logout() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Konfirmasi Logout'),
+            content: const Text('Apakah Anda yakin ingin logout?'),
+            actions: [
+              TextButton(
+                child: const Text('Tidak'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              TextButton(
+                child: const Text('Ya'),
+                onPressed: () {
+                  Navigator.of(context).pop(); // Tutup dialog
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  );
+                },
+              ),
+            ],
+          ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +89,6 @@ class BuyerHomeNew extends StatelessWidget {
           ],
         ),
         actions: [
-          // Tambahan: Tombol Map
           IconButton(
             icon: const Icon(Icons.map, color: Colors.white),
             tooltip: 'Lihat Peta',
@@ -43,34 +101,7 @@ class BuyerHomeNew extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder:
-                    (context) => AlertDialog(
-                      title: const Text('Konfirmasi Logout'),
-                      content: const Text('Apakah Anda yakin ingin logout?'),
-                      actions: [
-                        TextButton(
-                          child: const Text('Tidak'),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                        TextButton(
-                          child: const Text('Ya'),
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Tutup dialog
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const LoginScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-              );
-            },
+            onPressed: _logout,
           ),
         ],
       ),
@@ -91,6 +122,7 @@ class BuyerHomeNew extends StatelessWidget {
                   decoration: InputDecoration(
                     icon: Icon(Icons.search),
                     hintText: 'Cari properti...',
+                    border: InputBorder.none,
                   ),
                 ),
               ),
@@ -129,63 +161,73 @@ class BuyerHomeNew extends StatelessWidget {
 
             SizedBox(
               height: 220,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: 3,
-                itemBuilder: (context, index) {
-                  return Container(
-                    width: 180,
-                    margin: const EdgeInsets.only(right: 16),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          blurRadius: 6,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(12),
-                          ),
-                          child: Image.asset(
-                            'assets/rumah1.jpg',
-                            height: 120,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'Rumah Minimalis',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(height: 4),
-                              Text('Jakarta Selatan'),
-                              SizedBox(height: 4),
-                              Text(
-                                'Rp 1.2M',
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+              child:
+                  isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount:
+                            properties.length > 3 ? 3 : properties.length,
+                        itemBuilder: (context, index) {
+                          final p = properties[index];
+                          return Container(
+                            width: 180,
+                            margin: const EdgeInsets.only(right: 16),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(12),
+                                  ),
+                                  child: Image.asset(
+                                    'assets/rumah1.jpg',
+                                    height: 120,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        p.title ?? 'Tidak diketahui',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(p.location ?? '-'),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Rp ${p.price ?? '-'}',
+                                        style: const TextStyle(
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
             ),
 
             // Kategori cepat
